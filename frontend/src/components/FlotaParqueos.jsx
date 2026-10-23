@@ -22,8 +22,7 @@ const BASE_LINEAS = [
   { id: 13, codigo: 'L-18', nombre: 'L-18 - Línea 18: FEGUA 18 Calle <-> CENTRA Atlántida' }
 ];
 
-export default function FlotaParqueos({ buses = [], setBuses, pilotos = [], setPilotos, recargarDatos, API_BASE_URL = 'http://localhost:5000/api' }) {
-  const [busReasignarId, setBusReasignarId] = useState(buses[0]?.id_bus || 1);
+export default function FlotaParqueos({ buses = [], setBuses, pilotos = [], setPilotos, recargarDatos, API_BASE_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api' }) {  const [busReasignarId, setBusReasignarId] = useState(buses[0]?.id_bus || 1);
   const [nuevoParqueoVal, setNuevoParqueoVal] = useState(3);
   const [msgReasignar, setMsgReasignar] = useState(null);
 

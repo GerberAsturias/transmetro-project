@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function Molinete({ tarjetas = [], recargarDatos, API_BASE_URL = 'http://localhost:5000/api' }) {
-  const [estaciones, setEstaciones] = useState([]);
+export default function Molinete({ tarjetas = [], recargarDatos, API_BASE_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api' }) {  const [estaciones, setEstaciones] = useState([]);
   const [tarjetaSelCode, setTarjetaSelCode] = useState('');
   const [estacionSelId, setEstacionSelId] = useState('');
   const [montoTarifa, setMontoTarifa] = useState('2.00');

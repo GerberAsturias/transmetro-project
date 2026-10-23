@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function ControlAccesos({ usuarioSesion, API_BASE_URL = 'http://localhost:5000/api' }) {
-  const [accesos, setAccesos] = useState([]);
+export default function ControlAccesos({ usuarioSesion, API_BASE_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api' }) {  const [accesos, setAccesos] = useState([]);
   const [nombreGuardia, setNombreGuardia] = useState('');
   const [accesoSelId, setAccesoSelId] = useState('');
   const [turno, setTurno] = useState('DIURNO');

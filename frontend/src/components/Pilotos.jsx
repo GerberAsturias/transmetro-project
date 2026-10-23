@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-export default function Pilotos({ buses = [], setBuses, pilotos = [], setPilotos, recargarDatos, API_BASE_URL = 'http://localhost:5000/api' }) {
-  const [nombreInput, setNombreInput] = useState('');
+export default function Pilotos({ buses = [], setBuses, pilotos = [], setPilotos, recargarDatos, API_BASE_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api' }) {  const [nombreInput, setNombreInput] = useState('');
   const [dpiInput, setDpiInput] = useState('');
   const [licenciaInput, setLicenciaInput] = useState('');
   const [tipoLicenciaSel, setTipoLicenciaSel] = useState('TIPO A');

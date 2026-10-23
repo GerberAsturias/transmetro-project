@@ -9,9 +9,7 @@ import Pilotos from './components/Pilotos';
 import Reportes from './components/Reportes';
 import Bitacora from './components/Bitacora';
 
-const API_BASE_URL = 'http://localhost:5000/api';
-
-export default function App() {
+export default function InfraestructuraAforo({ API_BASE_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api' }) {export default function App() {
   const [usuarioAuth, setUsuarioAuth] = useState(() => {
     const sesionGuardada = localStorage.getItem('usuarioAuth');
     return sesionGuardada ? JSON.parse(sesionGuardada) : null;

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function Despacho({ API_BASE_URL = 'http://localhost:5000/api' }) {
-  const [buses, setBuses] = useState([]);
+export default function Despacho({ API_BASE_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api' }) {  const [buses, setBuses] = useState([]);
   const [estaciones, setEstaciones] = useState([]);
   
   // Estado de la simulación

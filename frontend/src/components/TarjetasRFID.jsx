@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-export default function TarjetasRFID({ tarjetas = [], setTarjetas, recargarDatos, API_BASE_URL = 'http://localhost:5000/api' }) {
-  const [rfidInput, setRfidInput] = useState('');
+export default function TarjetasRFID({ tarjetas = [], setTarjetas, recargarDatos, API_BASE_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api' }) {  const [rfidInput, setRfidInput] = useState('');
   const [titularInput, setTitularInput] = useState('');
   const [tipoBeneficioSel, setTipoBeneficioSel] = useState('VECINO');
   const [saldoInicialInput, setSaldoInicialInput] = useState('20.00');

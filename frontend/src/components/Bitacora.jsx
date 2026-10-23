@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function Bitacora({ API_BASE_URL = 'http://localhost:5000/api' }) {
-  const [transacciones, setTransacciones] = useState([]);
+export default function Bitacora({ API_BASE_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api' }) {  const [transacciones, setTransacciones] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 

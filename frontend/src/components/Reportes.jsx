@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function Reportes({ API_BASE_URL = 'http://localhost:5000/api' }) {
-  const [reporteConsolidado, setReporteConsolidado] = useState([]);
+export default function Reportes({ API_BASE_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api' }) {  const [reporteConsolidado, setReporteConsolidado] = useState([]);
   const [cargando, setCargando] = useState(true);
 
   useEffect(() => {

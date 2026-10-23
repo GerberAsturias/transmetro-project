@@ -14,8 +14,7 @@ const ESTACIONES_DEFAULT = [
   { id_estacion: 1041, nombre_estacion: 'Totem: Barrio San Antonio (Z.6)', tipo_estacion: 'TOTEM_PARADA', capacidad_maxima: 150, aforo_actual: 40 }
 ];
 
-export default function InfraestructuraAforo({ API_BASE_URL = 'http://localhost:5000/api' }) {
-  const [estaciones, setEstaciones] = useState(ESTACIONES_DEFAULT);
+export default function InfraestructuraAforo({ API_BASE_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api' }) {  const [estaciones, setEstaciones] = useState(ESTACIONES_DEFAULT);
   const [estacionSelId, setEstacionSelId] = useState(1); // Default ID 1 (CENTRA Sur)
   
   // FLUJO DE PASAJEROS

@@ -151,8 +151,7 @@ const MAPA_ESTACIONES_POR_LINEA = {
   ]
 };
 
-export default function MapaGeoespacial({ buses = [], API_BASE_URL = 'http://localhost:5000/api' }) {
-  const [lineaSelId, setLineaSelId] = useState(11); // L-12 por defecto
+export default function MapaGeoespacial({ buses = [], API_BASE_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api' }) {  const [lineaSelId, setLineaSelId] = useState(11); // L-12 por defecto
   const [busesDeLinea, setBusesDeLinea] = useState([]);
   const [busSelId, setBusSelId] = useState('');
 
