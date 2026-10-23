@@ -9,7 +9,10 @@ import Pilotos from './components/Pilotos';
 import Reportes from './components/Reportes';
 import Bitacora from './components/Bitacora';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api';
+const RAW_URL = import.meta.env.VITE_API_URL || 'https://transmetro-backend.onrender.com/api';
+const API_BASE_URL = RAW_URL.endsWith('/api') 
+  ? RAW_URL 
+  : `${RAW_URL.replace(/\/+$/, '')}/api`;
 
 export default function App() {
   const [usuarioAuth, setUsuarioAuth] = useState(() => {
