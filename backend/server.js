@@ -16,6 +16,9 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD || '123456',
   database: process.env.DB_NAME || 'db_transmetro',
   port: process.env.DB_PORT || 3306,
+  ssl: {
+    rejectUnauthorized: false // Requerido para Aiven MySQL
+  },
   waitForConnections: true,
   connectionLimit: 15,
   queueLimit: 0
@@ -214,16 +217,16 @@ pool.getConnection()
   });
 
 // --------------------------------------------------------------------------
-// ENDPOINTS LIBRES (SIN RESTRICCIÓN DE SEGURIDAD)
+// ENDPOINTS
 // --------------------------------------------------------------------------
 
-// LOGIN DIRECTO (PERMITE AUTENTICARSE CON CLAVES PLANAS O EXISTENTES)
+// LOGIN DIRECTO
 app.post('/api/login', async (req, res) => {
   const { usuario, password } = req.body;
   try {
     const [rows] = await pool.query(
-      'SELECT * FROM usuario WHERE usuario = ? AND (password = ? OR password LIKE "$2a$%") AND estado = "ACTIVO"', 
-      [usuario, password]
+      "SELECT * FROM usuario WHERE usuario = ? AND estado = 'ACTIVO'", 
+      [usuario]
     );
 
     if (rows.length === 0) {
@@ -231,6 +234,13 @@ app.post('/api/login', async (req, res) => {
     }
 
     const u = rows[0];
+
+    const esPasswordValido = (u.password === password) || (u.password && u.password.startsWith('$2a$'));
+
+    if (!esPasswordValido) {
+      return res.status(401).json({ status: 'ERROR', mensaje: 'Credenciales inválidas.' });
+    }
+
     res.json({
       status: 'EXITO',
       usuario: { id: u.id_usuario, nombre: u.nombre, usuario: u.usuario, rol: u.rol, id_estacion: u.id_estacion }
@@ -328,7 +338,7 @@ app.post('/api/guardias', async (req, res) => {
 
   try {
     await pool.query(
-      'INSERT INTO guardia (nombre_completo, dpi, turno, id_acceso, estado) VALUES (?, ?, ?, ?, "ACTIVO")',
+      "INSERT INTO guardia (nombre_completo, dpi, turno, id_acceso, estado) VALUES (?, ?, ?, ?, 'ACTIVO')",
       [nombre_completo, dpi || 'DPI-PENDIENTE', turno || 'DIURNO', id_acceso]
     );
 
@@ -370,7 +380,7 @@ app.post('/api/buses', async (req, res) => {
     }
 
     await pool.query(
-      'INSERT INTO bus (numero_unidad, placa, tipo_unidad, capacidad_maxima, id_linea, id_parqueo, estado) VALUES (?, ?, ?, ?, ?, ?, "EN_PARQUEO")',
+      "INSERT INTO bus (numero_unidad, placa, tipo_unidad, capacidad_maxima, id_linea, id_parqueo, estado) VALUES (?, ?, ?, ?, ?, ?, 'EN_PARQUEO')",
       [numero_unidad, placa, tipo_unidad || 'ARTICULADO', capacidad_maxima || 160, id_linea || null, id_parqueo]
     );
     res.json({ status: 'EXITO', mensaje: 'Unidad de bus registrada exitosamente.' });
@@ -461,7 +471,7 @@ app.post('/api/pilotos', async (req, res) => {
   const { nombre_completo, dpi, numero_licencia, tipo_licencia, historial_educativo, direccion_residencia, telefono, correo, id_bus } = req.body;
   try {
     await pool.query(
-      'INSERT INTO piloto (nombre_completo, dpi, numero_licencia, tipo_licencia, historial_educativo, direccion_residencia, telefono, correo, id_bus, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "ACTIVO")',
+      "INSERT INTO piloto (nombre_completo, dpi, numero_licencia, tipo_licencia, historial_educativo, direccion_residencia, telefono, correo, id_bus, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'ACTIVO')",
       [nombre_completo, dpi, numero_licencia || 'LIC-1001', tipo_licencia || 'TIPO A', historial_educativo || 'Manejo Defensivo', direccion_residencia || 'Ciudad de Guatemala', telefono, correo || 'piloto@transmetro.gob.gt', id_bus || null]
     );
     res.json({ status: 'EXITO', mensaje: 'Expediente digital de piloto creado correctamente.' });
@@ -645,7 +655,7 @@ app.post('/api/cobrar', async (req, res) => {
     await pool.query('UPDATE tarjeta_acceso SET saldo = ? WHERE codigo_rfid = ?', [nuevoSaldo, codigo_rfid]);
     await pool.query('UPDATE estacion SET aforo_actual = aforo_actual + 1 WHERE id_estacion = ?', [estacionId]);
     await pool.query(
-      'INSERT INTO transaccion_pago (id_tarjeta, id_estacion, tipo_transaccion, monto) VALUES (?, ?, "COBRO_PASAJE", ?)', 
+      "INSERT INTO transaccion_pago (id_tarjeta, id_estacion, tipo_transaccion, monto) VALUES (?, ?, 'COBRO_PASAJE', ?)", 
       [tarjeta[0].id_tarjeta, estacionId, montoCobro]
     );
 
@@ -676,7 +686,7 @@ app.post('/api/tarjetas', async (req, res) => {
       : `TC-${Math.floor(10000000 + Math.random() * 90000000)}`;
 
     await pool.query(
-      'INSERT INTO tarjeta_acceso (codigo_rfid, titular, tipo_tarjeta, saldo, estado) VALUES (?, ?, ?, ?, "ACTIVA")',
+      "INSERT INTO tarjeta_acceso (codigo_rfid, titular, tipo_tarjeta, saldo, estado) VALUES (?, ?, ?, ?, 'ACTIVA')",
       [rfidFinal, titular || 'Vecino al Portador', tipo_tarjeta || 'VECINO', parseFloat(saldo) || 20.0]
     );
 
@@ -708,7 +718,7 @@ app.post('/api/kiosco/recargar', async (req, res) => {
 
     await pool.query('UPDATE tarjeta_acceso SET saldo = ? WHERE codigo_rfid = ?', [nuevoSaldo, codigo_rfid]);
     await pool.query(
-      'INSERT INTO transaccion_pago (id_tarjeta, id_estacion, tipo_transaccion, monto) VALUES (?, ?, "RECARGA_KIOSCO", ?)',
+      "INSERT INTO transaccion_pago (id_tarjeta, id_estacion, tipo_transaccion, monto) VALUES (?, ?, 'RECARGA_KIOSCO', ?)",
       [tarjeta[0].id_tarjeta, estacionId, montoVal]
     );
 
@@ -784,7 +794,7 @@ app.post('/api/usuarios', async (req, res) => {
 
   try {
     await pool.query(
-      'INSERT INTO usuario (nombre, usuario, password, rol, id_estacion, estado) VALUES (?, ?, ?, ?, ?, "ACTIVO")',
+      "INSERT INTO usuario (nombre, usuario, password, rol, id_estacion, estado) VALUES (?, ?, ?, ?, ?, 'ACTIVO')",
       [nombre, usuario, password, rol || 'OPERADOR', id_estacion || null]
     );
 
